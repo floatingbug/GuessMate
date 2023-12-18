@@ -1,0 +1,19 @@
+body, html {
+	color: var(--primary-500);
+	font-family: var(--font-family);
+	height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+	height: 100%;
+}
+
+h1 {
+    color: var(--purple-300);
+}
+
+input {
+	color: var(--primary-300);
+}
