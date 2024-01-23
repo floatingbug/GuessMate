@@ -1,15 +1,30 @@
 <script setup>
-    import {ref, toRef, onMounted} from 'vue'
-	import router from "../router/index.js";
+    import {ref, onMounted, toRef, watch} from 'vue'
+	import {useRouter} from "vue-router";
 	import Menubar from "primevue/menubar";
 	import Menu from "primevue/menu";
+	import checkIfIsSignedIn from "../js/checkIfIsSignedIn.js";
+	import eventBus from "../js/eventBus.js";
 
+	const router = useRouter();
+	const isSignedIn = ref(false);
 	const items = ref([
 		{
-			label: "Answer questions"
+			label: "Add Quiz",
+			command: ()=>{
+				router.push("/add-quiz");
+			}
 		},
 		{
-			label: "Guess questions"
+			label: "Quizzes",
+			items: [
+				{
+					label: "completed-quizzes",
+					command: ()=>{
+						router.push("/completed-quizzes");
+					}
+				}
+			]
 		}
 	]);
 	const user = ref([
@@ -21,23 +36,21 @@
 		}
 	]);
 	const menu = ref();
-	const isResponsiveMode = ref(true);
+	const isResponsiveMode = ref(false);
 
-	onMounted(()=>{
-		if(isSignedIn.value){
+	watch(()=> eventBus.isSignedIn, (oldValue, newValue)=>{
+		if(checkIfIsSignedIn()){
 			isResponsiveMode.value = true;
+			isSignedIn.value = true;
 		}
 		else{
 			isResponsiveMode.value = false;
 		}
 	});
-	
+
 	function toggle(event) {
 		menu.value.toggle(event);
 	};
-	
-	const props = defineProps(["isSignedIn"]);
-	const isSignedIn = toRef(props.isSignedIn);
 </script>
 
 <template>
@@ -72,12 +85,13 @@
 
 <style scoped>
 .p-menubar{
+	height: 60px;
 }
 
 :deep(.p-menubar-root-list) {
 	width: 100%;
 	min-width: 0;
-	max-width: 390px;
+	max-width: 330px;
 	justify-content: space-between;
 	margin-left: 10%;
 }

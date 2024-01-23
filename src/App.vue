@@ -3,27 +3,27 @@
 	import router from "./router/index.js";
     import Navbar from './components/Navbar.vue'
     import HomeView from './views/HomeView.vue'
-
-	const isSignedIn = ref(false);
+	import checkIfIsSignedIn from "./js/checkIfIsSignedIn.js";
+	import eventBus from "./js/eventBus.js";
 	
 	onMounted(()=>{
-		//isSignedIn.value = localStorage.getItem("isSignedIn");
-		if(isSignedIn.value){
-			router.push("/");
+		if(checkIfIsSignedIn()){
+			eventBus.isSignedIn = true;
 		}
 	});
+
 </script>
 
 <template>
     <header>
-        <Navbar v-bind:isSignedIn="isSignedIn" />
+        <Navbar />
     </header>
 
-    <RouterView v-bind:isSignedIn="isSignedIn"/>
+    <RouterView />
 </template>
 
 <style scoped>
     header {
-		height: 10%;
+		width: 100%;
     }
 </style>

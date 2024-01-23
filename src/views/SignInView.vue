@@ -1,24 +1,41 @@
 <script setup>
 	import {ref, reactive} from "vue";
+	import {useRouter} from "vue-router";
 	import InputGroup from 'primevue/inputgroup';
 	import InputGroupAddon from 'primevue/inputgroupaddon';
 	import InputText from "primevue/inputtext";
 	import InputNumber from "primevue/inputnumber";
-	import apiCall from "../renderless-components/apiCall.js";
+	import apiCall from "../js/apiCall.js";
+	import eventBus from "../js/eventBus.js";
 
+	const router = useRouter();
 	const credentials = reactive({
 		name: "",
 		email: "",
 		password: ""
 	});
+	const errorMessage = ref("");
 
 	async function signIn(){
 		const request = {
 			method: "post",
 			url: "/sign-in",
-			data: {name: username.value}
+			data: {
+				name: credentials.name, 
+				email: credentials.email,
+				password: credentials.password
+			}
 		};
 		const result = await apiCall(request);
+		if(result && result.token){
+			localStorage.setItem("token", result.token);
+			localStorage.setItem("isSignedIn", true);
+			eventBus.isSignedIn = true;
+			router.push("/");
+		}
+		else{
+			errorMessage.value = result.msg;
+		}
 	}
 
 </script>
@@ -39,6 +56,7 @@
 				</InputGroupAddon>
 				<InputText placeholder="Password" v-model="credentials.password" />
 			</InputGroup>
+			<span style="color: var(--red-700)" v-if="errorMessage">{{errorMessage}}</span>
 			<Button label="Sign in" v-on:click="signIn" />
 		</div>
 	</div>
